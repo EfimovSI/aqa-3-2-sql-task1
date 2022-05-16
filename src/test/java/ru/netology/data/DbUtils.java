@@ -25,4 +25,22 @@ public class DbUtils {
         }
         return verificationCode;
     }
+
+    @SneakyThrows
+    public static void clearDb () {
+        var authSQL = "DELETE FROM auth_codes";
+        var cardsSQL = "DELETE FROM cards";
+        var usersSQL = "DELETE FROM users";
+        var runner = new QueryRunner();
+
+        try (
+                var conn = DriverManager.getConnection(
+                        "jdbc:mysql://localhost:3306/app", "app", "pass"
+                );
+        ) {
+            runner.execute(conn, authSQL, new ScalarHandler<>());
+            runner.execute(conn, cardsSQL, new ScalarHandler<>());
+            runner.execute(conn, usersSQL, new ScalarHandler<>());
+        }
+    }
 }

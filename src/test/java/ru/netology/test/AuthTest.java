@@ -1,5 +1,6 @@
 package ru.netology.test;
 
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.netology.data.DbUtils;
@@ -15,6 +16,11 @@ public class AuthTest {
     @BeforeEach
     void login() {
         open("http://localhost:9999");
+    }
+
+    @AfterAll
+    static void clear() {
+        DbUtils.clearDb();
     }
 
     @Test
