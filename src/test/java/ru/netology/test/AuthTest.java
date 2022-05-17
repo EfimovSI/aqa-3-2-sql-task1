@@ -1,8 +1,10 @@
 package ru.netology.test;
 
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import ru.netology.data.DataGenerator;
 import ru.netology.data.DbUtils;
 import ru.netology.data.User;
 import ru.netology.page.DashboardPage;
@@ -13,6 +15,13 @@ import static com.codeborne.selenide.Selenide.open;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AuthTest {
+    @BeforeAll
+    static void generateDb() {
+        for (int i = 0; i < 10; i++) {
+            DbUtils.addNewUserToDb();
+        }
+    }
+
     @BeforeEach
     void login() {
         open("http://localhost:9999");
@@ -25,7 +34,7 @@ public class AuthTest {
 
     @Test
     void shouldLoginCorrectly() {
-        User user = new User("vasya", "qwerty123");
+        User user = DbUtils.getRandomUserFromDb();
         var loginPage = new LoginPage();
         VerificationPage verificationPage = loginPage.validLogin(user);
         DashboardPage dashboardPage = verificationPage.validVerify(DbUtils.getVerificationCode());
@@ -34,35 +43,35 @@ public class AuthTest {
 
     @Test
     void shouldNotLoginWithEmptyFields() {
-        User user = new User("", "");
+        User user = new User("","", "");
         var loginPage = new LoginPage();
         loginPage.emptyLogin(user);
     }
 
     @Test
     void shouldNotLoginByEmptyPassword() {
-        User user = new User("vasya", "");
+        User user = new User("",DbUtils.getRandomUserFromDb().getLogin(), "");
         var loginPage = new LoginPage();
         loginPage.emptyPassword(user);
     }
 
     @Test
     void shouldNotLoginByInvalidPassword() {
-        User user = new User("vasya", "123");
+        User user = new User("",DbUtils.getRandomUserFromDb().getLogin(), "123");
         var loginPage = new LoginPage();
         loginPage.invalidLogin(user);
     }
 
     @Test
     void shouldNotLoginByUnexistingLoginWithExistingPassword() {
-        User user = new User("kolya", "qwerty123");
+        User user = new User("", DataGenerator.generateUser().getLogin(), DbUtils.getRandomUserFromDb().getPassword());
         var loginPage = new LoginPage();
         loginPage.invalidLogin(user);
     }
 
     @Test
     void shouldNotLoginByInvalidVerificationCode() {
-        User user = new User("vasya", "qwerty123");
+        User user = DbUtils.getRandomUserFromDb();
         var loginPage = new LoginPage();
         VerificationPage verificationPage = loginPage.validLogin(user);
         verificationPage.invalidVerify();
@@ -70,7 +79,7 @@ public class AuthTest {
 
     @Test
     void shouldBlockByTripleInvalidLogin() {
-        User user = new User("vasya", "123");
+        User user = DbUtils.getRandomUserFromDb();
         var loginPage = new LoginPage();
         loginPage.invalidLogin(user);
         loginPage.invalidLogin(user);
@@ -79,7 +88,7 @@ public class AuthTest {
 
     @Test
     void shouldBlockByTripleInvalidVerify() {
-        User user = new User("petya", "123qwerty");
+        User user = DbUtils.getRandomUserFromDb();
         var loginPage = new LoginPage();
         VerificationPage verificationPage = loginPage.validLogin(user);
         verificationPage.invalidVerify();

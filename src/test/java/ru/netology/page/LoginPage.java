@@ -18,7 +18,7 @@ public class LoginPage {
 
     public VerificationPage validLogin(User user) {
         loginField.val(user.getLogin());
-        passwordField.val(user.getPassword());
+        passwordField.val("qwerty123");
         loginButton.click();
         return new VerificationPage();
     }

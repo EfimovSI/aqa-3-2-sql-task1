@@ -2,6 +2,8 @@ package ru.netology.data;
 
 import lombok.SneakyThrows;
 import org.apache.commons.dbutils.QueryRunner;
+import org.apache.commons.dbutils.ResultSetHandler;
+import org.apache.commons.dbutils.handlers.BeanHandler;
 import org.apache.commons.dbutils.handlers.ScalarHandler;
 
 import java.sql.DriverManager;
@@ -43,4 +45,38 @@ public class DbUtils {
             runner.execute(conn, usersSQL, new ScalarHandler<>());
         }
     }
+
+    @SneakyThrows
+    public static void addNewUserToDb() {
+        User user = DataGenerator.generateUser();
+
+        var addUserSQL = "INSERT INTO users (id, login, password) VALUES (?, ?, ?);";
+        var runner = new QueryRunner();
+
+        try (
+                var conn = DriverManager.getConnection(
+                        "jdbc:mysql://localhost:3306/app", "app", "pass"
+                );
+        ) {
+            runner.update(conn, addUserSQL, user.getId(), user.getLogin(), user.getPassword());
+        }
+    }
+
+//    @SneakyThrows
+//    public static User getRandomUserFromDb() {
+//        var getLoginSQL = "SELECT id, login, password FROM users ORDER BY RAND() LIMIT 1;";
+//        var runner = new QueryRunner();
+//        User user;
+//        ResultSetHandler<User> handler = new BeanHandler<>(User.class);
+//        try (
+//                var conn = DriverManager.getConnection(
+//                        "jdbc:mysql://localhost:3306/app", "app", "pass"
+//                );
+//        ) {
+//            var rs = runner.query(conn, getLoginSQL, handler);
+//            user = rs;
+//        }
+//        System.out.println(user);
+//        return user;
+//    }
 }
