@@ -11,14 +11,20 @@ import ru.netology.page.DashboardPage;
 import ru.netology.page.LoginPage;
 import ru.netology.page.VerificationPage;
 
+import java.util.ArrayList;
+import java.util.Random;
+
 import static com.codeborne.selenide.Selenide.open;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AuthTest {
+    public static ArrayList<User> users = new ArrayList<>();
+
     @BeforeAll
     static void generateDb() {
+        DbUtils.clearDb();
         for (int i = 0; i < 10; i++) {
-            DbUtils.addNewUserToDb();
+            users.add(DbUtils.addNewUserToDb());
         }
     }
 
@@ -34,7 +40,7 @@ public class AuthTest {
 
     @Test
     void shouldLoginCorrectly() {
-        User user = DbUtils.getRandomUserFromDb();
+        User user = users.get(new Random().nextInt(users.size() - 1));
         var loginPage = new LoginPage();
         VerificationPage verificationPage = loginPage.validLogin(user);
         DashboardPage dashboardPage = verificationPage.validVerify(DbUtils.getVerificationCode());
@@ -50,28 +56,28 @@ public class AuthTest {
 
     @Test
     void shouldNotLoginByEmptyPassword() {
-        User user = new User("",DbUtils.getRandomUserFromDb().getLogin(), "");
+        User user = new User("", users.get(new Random().nextInt(users.size() - 1)).getLogin(), "");
         var loginPage = new LoginPage();
         loginPage.emptyPassword(user);
     }
 
     @Test
     void shouldNotLoginByInvalidPassword() {
-        User user = new User("",DbUtils.getRandomUserFromDb().getLogin(), "123");
+        User user = new User("", users.get(new Random().nextInt(users.size() - 1)).getLogin(), "123");
         var loginPage = new LoginPage();
         loginPage.invalidLogin(user);
     }
 
     @Test
     void shouldNotLoginByUnexistingLoginWithExistingPassword() {
-        User user = new User("", DataGenerator.generateUser().getLogin(), DbUtils.getRandomUserFromDb().getPassword());
+        User user = new User("", "login", users.get(new Random().nextInt(users.size() - 1)).getPassword());
         var loginPage = new LoginPage();
         loginPage.invalidLogin(user);
     }
 
     @Test
     void shouldNotLoginByInvalidVerificationCode() {
-        User user = DbUtils.getRandomUserFromDb();
+        User user = users.get(new Random().nextInt(users.size() - 1));
         var loginPage = new LoginPage();
         VerificationPage verificationPage = loginPage.validLogin(user);
         verificationPage.invalidVerify();
@@ -79,7 +85,7 @@ public class AuthTest {
 
     @Test
     void shouldBlockByTripleInvalidLogin() {
-        User user = DbUtils.getRandomUserFromDb();
+        User user = users.get(new Random().nextInt(users.size() - 1));
         var loginPage = new LoginPage();
         loginPage.invalidLogin(user);
         loginPage.invalidLogin(user);
@@ -88,7 +94,7 @@ public class AuthTest {
 
     @Test
     void shouldBlockByTripleInvalidVerify() {
-        User user = DbUtils.getRandomUserFromDb();
+        User user = users.get(new Random().nextInt(users.size() - 1));
         var loginPage = new LoginPage();
         VerificationPage verificationPage = loginPage.validLogin(user);
         verificationPage.invalidVerify();

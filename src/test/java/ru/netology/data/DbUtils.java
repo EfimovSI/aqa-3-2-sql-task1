@@ -47,7 +47,7 @@ public class DbUtils {
     }
 
     @SneakyThrows
-    public static void addNewUserToDb() {
+    public static User addNewUserToDb() {
         User user = DataGenerator.generateUser();
 
         var addUserSQL = "INSERT INTO users (id, login, password) VALUES (?, ?, ?);";
@@ -60,6 +60,7 @@ public class DbUtils {
         ) {
             runner.update(conn, addUserSQL, user.getId(), user.getLogin(), user.getPassword());
         }
+        return user;
     }
 
 //    @SneakyThrows
