@@ -6,7 +6,6 @@ import org.openqa.selenium.Keys;
 import ru.netology.data.User;
 
 import static com.codeborne.selenide.Selenide.$;
-import static java.lang.Character.CONTROL;
 
 public class LoginPage {
     private SelenideElement loginField = $("[data-test-id=login] input");

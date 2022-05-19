@@ -2,14 +2,13 @@ package ru.netology.data;
 
 import lombok.SneakyThrows;
 import org.apache.commons.dbutils.QueryRunner;
-import org.apache.commons.dbutils.ResultSetHandler;
-import org.apache.commons.dbutils.handlers.BeanHandler;
 import org.apache.commons.dbutils.handlers.ScalarHandler;
 
 import java.sql.DriverManager;
 
 public class DbUtils {
-    public DbUtils() {}
+    public DbUtils() {
+    }
 
     @SneakyThrows
     public static String getVerificationCode() {
@@ -29,7 +28,7 @@ public class DbUtils {
     }
 
     @SneakyThrows
-    public static void clearDb () {
+    public static void clearDb() {
         var authSQL = "DELETE FROM auth_codes";
         var cardsSQL = "DELETE FROM cards";
         var usersSQL = "DELETE FROM users";
@@ -62,22 +61,4 @@ public class DbUtils {
         }
         return user;
     }
-
-//    @SneakyThrows
-//    public static User getRandomUserFromDb() {
-//        var getLoginSQL = "SELECT id, login, password FROM users ORDER BY RAND() LIMIT 1;";
-//        var runner = new QueryRunner();
-//        User user;
-//        ResultSetHandler<User> handler = new BeanHandler<>(User.class);
-//        try (
-//                var conn = DriverManager.getConnection(
-//                        "jdbc:mysql://localhost:3306/app", "app", "pass"
-//                );
-//        ) {
-//            var rs = runner.query(conn, getLoginSQL, handler);
-//            user = rs;
-//        }
-//        System.out.println(user);
-//        return user;
-//    }
 }

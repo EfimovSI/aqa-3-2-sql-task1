@@ -4,7 +4,6 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import ru.netology.data.DataGenerator;
 import ru.netology.data.DbUtils;
 import ru.netology.data.User;
 import ru.netology.page.DashboardPage;
@@ -22,20 +21,20 @@ public class AuthTest {
 
     @BeforeAll
     static void generateDb() {
-        DbUtils.clearDb();
+        DbUtils.clearDb(); //очищаю первых двух пользователей (из-за паролей)
         for (int i = 0; i < 10; i++) {
             users.add(DbUtils.addNewUserToDb());
         }
     }
 
-    @BeforeEach
-    void login() {
-        open("http://localhost:9999");
-    }
-
     @AfterAll
     static void clear() {
         DbUtils.clearDb();
+    }
+
+    @BeforeEach
+    void login() {
+        open("http://localhost:9999");
     }
 
     @Test
@@ -49,7 +48,7 @@ public class AuthTest {
 
     @Test
     void shouldNotLoginWithEmptyFields() {
-        User user = new User("","", "");
+        User user = new User("", "", "");
         var loginPage = new LoginPage();
         loginPage.emptyLogin(user);
     }
