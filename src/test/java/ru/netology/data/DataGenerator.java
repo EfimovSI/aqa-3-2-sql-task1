@@ -12,6 +12,5 @@ public class DataGenerator {
         String id = faker.lorem().characters(36,true, true);
         String login = faker.name().username();
         return new User(id, login, "$2a$10$ki.mGkhoxzrWAMNWxvpI7OE94DSVmi4TV8gUHXYvsMEp9i9kkxPg2");
-        // TODO: 16.05.2022 Integrate to DbUtils & Tests
     }
 }
